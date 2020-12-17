@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "971741448897",
+    "project_id": "imagenes-43960",
+    "storage_bucket": "imagenes-43960.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:971741448897:android:429d945c75a6873177a240",
+        "android_client_info": {
+          "package_name": "com.davidulloa.examen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "971741448897-f3co1m9fk03gn3esabibvsv783ss0bab.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.davidulloa.examen",
+            "certificate_hash": "4544fc8e080c04a5d6eeffd2de34b9311b70d166"
+          }
+        },
+        {
+          "client_id": "971741448897-ijvcnk3q615q1bus5hpul1s5v77l8614.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVHpi6NpXQRjnVIgWQbHVJ0vlqNkK1-Ag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "971741448897-ijvcnk3q615q1bus5hpul1s5v77l8614.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
