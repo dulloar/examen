@@ -13,9 +13,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_movies"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
-            android:layout_margin="5dp"
-            android:padding="5dp"
+            app:spanCount="3"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

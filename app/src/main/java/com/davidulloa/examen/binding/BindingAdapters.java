@@ -1,5 +1,6 @@
 package com.davidulloa.examen.binding;
 
+import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -18,6 +19,12 @@ public class BindingAdapters {
     public static void setImage(ImageView imageView, String path){
         Glide.with(imageView.getContext())
                 .load(ApiConstants.IMAGE_API+path).into(imageView);
+    }
+
+    @BindingAdapter("urlImageUri")
+    public static void setImage(ImageView imageView, Uri path){
+        Glide.with(imageView.getContext())
+                .load(path.toString()).into(imageView);
     }
 
 }

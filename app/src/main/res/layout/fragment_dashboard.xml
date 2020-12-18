@@ -15,7 +15,6 @@
             android:id="@+id/container_map"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight=".3"
             app:layout_constraintBottom_toTopOf="@+id/rv_incidencias"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

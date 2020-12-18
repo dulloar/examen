@@ -19,8 +19,5 @@ public class ActivityBindingAdapters {
         this.activity = activity;
     }
 
-   @BindingAdapter("imageUrl")
-    public void bindImage(ImageView imageView, String url){
-        Glide.with(activity).load(ApiConstants.IMAGE_API+url).into(imageView);
-    }
+
 }

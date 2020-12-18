@@ -12,8 +12,10 @@ import com.davidulloa.examen.data.local.models.Movie;
 import com.davidulloa.examen.data.network.NetworkBoundResource;
 import com.davidulloa.examen.data.network.Resource;
 import com.davidulloa.examen.data.remote.response.MovieResponse;
+import com.davidulloa.examen.util.RateLimiter;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -21,6 +23,8 @@ public class MovieRepository {
     private MovieDao movieDao;
     private MovieService movieService;
     private AppExecutors appExecutors;
+
+    private RateLimiter<String> movieListRateLimit = new RateLimiter<>(10, TimeUnit.MINUTES);
 
     @Inject
     public MovieRepository(MovieDao movieDao, MovieService movieService, AppExecutors appExecutors) {
@@ -39,7 +43,7 @@ public class MovieRepository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Movie> data) {
-                return data == null || data.isEmpty();
+                return data == null || data.isEmpty() || movieListRateLimit.shouldFetch("");
             }
 
             @NonNull

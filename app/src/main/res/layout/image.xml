@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="image"
+            type="com.davidulloa.examen.data.local.models.Image" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_image"
+        android:layout_width="130dp"
+        android:layout_height="150dp"
+        android:padding="10dp"
+        card_view:cardBackgroundColor="@android:color/transparent"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="1dp"
+        android:layout_margin="3dp">
+        <ImageView
+            android:id="@+id/iv_image"
+            android:layout_width="130dp"
+            android:layout_height="150dp"
+            app:urlImageUri="@{image.uri}"
+            />
+    </androidx.cardview.widget.CardView>
+</layout>

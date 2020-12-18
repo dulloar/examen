@@ -1,11 +1,13 @@
 package com.davidulloa.examen.data.local.models;
 
+import android.net.Uri;
+
 public class Image {
     private String id;
-    private String path;
+    private Uri uri;
 
-    public Image(String path) {
-        this.path = path;
+    public Image(Uri uri) {
+        this.uri = uri;
     }
 
     public Image() {
@@ -19,11 +21,11 @@ public class Image {
         this.id = id;
     }
 
-    public String getPath() {
-        return path;
+    public Uri getUri() {
+        return uri;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setUri(Uri uri) {
+        this.uri = uri;
     }
 }

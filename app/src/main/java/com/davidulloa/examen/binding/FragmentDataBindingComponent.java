@@ -13,9 +13,4 @@ public class FragmentDataBindingComponent implements androidx.databinding.DataBi
         return adapters;
     }
 
-
-    @Override
-    public ActivityBindingAdapters getActivityBindingAdapters() {
-        return null;
-    }
 }

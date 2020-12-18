@@ -1,6 +1,7 @@
 package com.davidulloa.examen.ui.file;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -21,11 +23,15 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.davidulloa.examen.R;
 import com.davidulloa.examen.binding.FragmentDataBindingComponent;
+import com.davidulloa.examen.data.local.models.Image;
 import com.davidulloa.examen.databinding.FragmentDashboardBinding;
 import com.davidulloa.examen.databinding.FragmentNotificationBinding;
 import com.davidulloa.examen.di.Injectable;
+import com.davidulloa.examen.ui.adapters.ImageRecyclerAdpater;
+import com.davidulloa.examen.ui.adapters.MovieRecyclerAdapter;
 import com.davidulloa.examen.ui.common.NavigationController;
 import com.davidulloa.examen.ui.maps.MapsFragment;
+import com.davidulloa.examen.ui.viewmodel.ImageViewModel;
 import com.davidulloa.examen.util.AutoClearedValue;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,12 +39,19 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.CompositePermissionListener;
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -47,7 +60,7 @@ import javax.inject.Inject;
  * Use the {@link FilesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FilesFragment extends Fragment implements Injectable, View.OnClickListener {
+public class FilesFragment extends Fragment implements Injectable, View.OnClickListener, PermissionListener{
 
 
     @Inject
@@ -58,6 +71,10 @@ public class FilesFragment extends Fragment implements Injectable, View.OnClickL
 
     androidx.databinding.DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
     AutoClearedValue<FragmentNotificationBinding> binding;
+
+    AutoClearedValue<ImageRecyclerAdpater> adapter;
+
+    private ImageViewModel imageViewModel;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -66,6 +83,8 @@ public class FilesFragment extends Fragment implements Injectable, View.OnClickL
     private StorageReference mStorageRef;
     private PermissionListener allPermissionsListener;
     private static final int PICK_IMAGE = 2;
+    private static final int MULTI = 3;
+    private List<Image> images = new ArrayList<>();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -103,16 +122,23 @@ public class FilesFragment extends Fragment implements Injectable, View.OnClickL
         mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
-
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        imageViewModel = ViewModelProviders.of(getActivity()).get(ImageViewModel.class);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentNotificationBinding fragmentNotificationBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_notification
-                ,container,false);
+                ,container,false,dataBindingComponent);
 
+        ImageRecyclerAdpater adpater = new ImageRecyclerAdpater(dataBindingComponent);
         binding = new AutoClearedValue<>(this, fragmentNotificationBinding);
 
+        binding.get().recyclerViewImagenes.setAdapter(adpater);
+        adapter = new AutoClearedValue<>(this,adpater);
         binding.get().fabAddIncidence.setOnClickListener(this);
 
 
@@ -140,73 +166,65 @@ public class FilesFragment extends Fragment implements Injectable, View.OnClickL
     }
 
 
-
-    /*private void  download() throws IOException {
-
-        File localFile = File.createTempFile("images", "jpg");
-        riversRef.getFile(localFile)
-                .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                        // Successfully downloaded data to local file
-                        // ...
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle failed download
-                // ...
-            }
-        });
-    }
-*/
-    /*@Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent[] data) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        ClipData clipData = data.getClipData();
         if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK){
-            if(data != null) {
-                Uri imagenSeleccionada;// = data.; // content://gallery/photos/..
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getContext().getContentResolver().query(imagenSeleccionada,
-                        filePathColumn, null, null, null);
-                if(cursor != null) {
-                  *//*  cursor.moveToFirst();
-                    // "filename" = filePathColumn[0]
-                    int imagenIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String fotoPath = cursor.getString(imagenIndex);
-                    photoPathTemp = fotoPath;
-                    cursor.close();
-                    Glide.with(this)
-                            .load(fotoPath)
-                            .apply(new RequestOptions().override(600,600))
-                            .centerCrop()
-                            .into(binding.get().ivFoto);*//*
+            if(clipData == null) {
+                Uri imagenSeleccionada = data.getData(); // content://gallery/photos/..
+               images.add(new Image(imagenSeleccionada));
+                }else{
+                for(int i=0; i< clipData.getItemCount(); i++){
+                    images.add(new Image(clipData.getItemAt(i).getUri()));
+
                 }
 
+                List<Image> imagest = new ArrayList<>();
+
+                imageViewModel.saveImage(images).observe(getViewLifecycleOwner(),images1 -> {
+                    if(images1 != null){
+                        imagest.add(images1);
+                        adapter.get().replace(imagest);
+                    } else {
+                        adapter.get().replace(Collections.emptyList());
+                    }
+                });
+
+
             }
-
-
         }
     }
-*/
+
+
     private void loadPicture(){
-        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent getIntent = new Intent();
         getIntent.setType("image/*");
+        getIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+        getIntent.setAction(Intent.ACTION_GET_CONTENT);
 
-        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickIntent.setType("image/*");
-
-        Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
-
-        startActivityForResult(chooserIntent, PICK_IMAGE);
+        startActivityForResult(Intent.createChooser(getIntent,"Selecciona las imagenes"),PICK_IMAGE);
     }
 
     @Override
     public void onClick(View view) {
         checkPermissions();
         loadPicture();
+
+    }
+
+    @Override
+    public void onPermissionGranted(PermissionGrantedResponse response) {
+
+    }
+
+    @Override
+    public void onPermissionDenied(PermissionDeniedResponse response) {
+
+    }
+
+    @Override
+    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
 
     }
 }

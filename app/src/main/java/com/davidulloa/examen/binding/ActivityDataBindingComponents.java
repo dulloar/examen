@@ -14,10 +14,6 @@ public class ActivityDataBindingComponents implements DataBindingComponent {
     }
 
 
-    @Override
-    public ActivityBindingAdapters getActivityBindingAdapters() {
-        return adapters;
-    }
 
 
 
